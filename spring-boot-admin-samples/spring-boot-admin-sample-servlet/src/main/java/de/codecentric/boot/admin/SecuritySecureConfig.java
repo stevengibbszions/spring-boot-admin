@@ -18,6 +18,7 @@ package de.codecentric.boot.admin;
 
 import java.util.UUID;
 
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
@@ -38,8 +39,11 @@ public class SecuritySecureConfig extends WebSecurityConfigurerAdapter {
 
 	private final AdminServerProperties adminServer;
 
-	public SecuritySecureConfig(AdminServerProperties adminServer) {
+	private final SecurityProperties security;
+
+	public SecuritySecureConfig(AdminServerProperties adminServer, SecurityProperties security) {
 		this.adminServer = adminServer;
+		this.security = security;
 	}
 
 	@Override
@@ -50,6 +54,8 @@ public class SecuritySecureConfig extends WebSecurityConfigurerAdapter {
 
 		http.authorizeRequests(
 				(authorizeRequests) -> authorizeRequests.antMatchers(this.adminServer.path("/assets/**")).permitAll() // <1>
+						.antMatchers(this.adminServer.path("/actuator/info")).permitAll()
+						.antMatchers(this.adminServer.path("/actuator/health")).permitAll()
 						.antMatchers(this.adminServer.path("/login")).permitAll().anyRequest().authenticated() // <2>
 		).formLogin(
 				(formLogin) -> formLogin.loginPage(this.adminServer.path("/login")).successHandler(successHandler).and() // <3>
@@ -68,7 +74,8 @@ public class SecuritySecureConfig extends WebSecurityConfigurerAdapter {
 	// Required to provide UserDetailsService for "remember functionality"
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.inMemoryAuthentication().withUser("user").password("{noop}password").roles("USER");
+		auth.inMemoryAuthentication().withUser(security.getUser().getName())
+				.password("{noop}" + security.getUser().getPassword()).roles("USER");
 	}
 
 }

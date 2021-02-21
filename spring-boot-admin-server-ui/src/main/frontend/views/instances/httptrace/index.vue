@@ -105,17 +105,17 @@
 </template>
 
 <script>
-  import subscribing from '@/mixins/subscribing';
-  import Instance from '@/services/instance';
-  import {concatMap, timer} from '@/utils/rxjs';
-  import debounce from 'lodash/debounce';
-  import mapKeys from 'lodash/mapKeys';
-  import moment from 'moment';
-  import {VIEW_GROUP} from '../../index';
-  import sbaTracesChart from './traces-chart';
-  import sbaTracesList from './traces-list';
+import subscribing from '@/mixins/subscribing';
+import Instance from '@/services/instance';
+import {concatMap, timer} from '@/utils/rxjs';
+import debounce from 'lodash/debounce';
+import mapKeys from 'lodash/mapKeys';
+import moment from 'moment';
+import {VIEW_GROUP} from '../../index';
+import sbaTracesChart from './traces-chart';
+import sbaTracesList from './traces-list';
 
-  const addToFilter = (oldFilter, addedFilter) =>
+const addToFilter = (oldFilter, addedFilter) =>
     !oldFilter
       ? addedFilter
       : (val, key) => oldFilter(val, key) && addedFilter(val, key);
@@ -134,16 +134,32 @@
       return `${this.timestamp.valueOf()}-${this.request.method}-${this.request.uri}`;
     }
 
-    get contentLength() {
-      const contentLength = this.response && this.response.headers['content-length'] && this.response.headers['content-length'][0];
+    get contentLengthResponse() {
+      return this.extractContentLength(this.response);
+    }
+
+    get contentLengthRequest() {
+      return this.extractContentLength(this.request);
+    }
+
+    extractContentLength(origin) {
+      const contentLength = origin && origin.headers['content-length'] && origin.headers['content-length'][0];
       if (contentLength && /^\d+$/.test(contentLength)) {
         return parseInt(contentLength);
       }
       return null;
     }
 
-    get contentType() {
-      const contentType = this.response &&  this.response.headers['content-type'] && this.response.headers['content-type'][0];
+    get contentTypeResponse() {
+      return this.extractContentType(this.response);
+    }
+
+    get contentTypeRequest() {
+      return this.extractContentType(this.request);
+    }
+
+    extractContentType(origin) {
+      const contentType = origin && origin.headers['content-type'] && origin.headers['content-type'][0];
       if (contentType) {
         const idx = contentType.indexOf(';');
         return idx >= 0 ? contentType.substring(0, idx) : contentType;
@@ -153,6 +169,10 @@
 
     compareTo(other) {
       return this.timestamp - other.timestamp;
+    }
+
+    isPending() {
+      return !this.response;
     }
 
     isSuccess() {

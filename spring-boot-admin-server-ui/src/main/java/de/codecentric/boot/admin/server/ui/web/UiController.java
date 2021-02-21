@@ -20,8 +20,6 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nullable;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import org.springframework.boot.context.properties.ConstructorBinding;
@@ -32,6 +30,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import de.codecentric.boot.admin.server.ui.config.AdminServerUiProperties.PollTimer;
 import de.codecentric.boot.admin.server.ui.extensions.UiExtension;
 import de.codecentric.boot.admin.server.ui.extensions.UiExtensions;
 import de.codecentric.boot.admin.server.web.AdminController;
@@ -87,8 +86,10 @@ public class UiController {
 		return this.uiExtensions.getJsExtensions();
 	}
 
+	// FIXME: add @Nullable to principal parameter
+	// see https://github.com/spring-projects/spring-framework/issues/25981
 	@ModelAttribute(value = "user", binding = false)
-	public Map<String, Object> getUser(@Nullable Principal principal) {
+	public Map<String, Object> getUser(Principal principal) {
 		if (principal != null) {
 			return singletonMap("name", principal.getName());
 		}
@@ -124,6 +125,8 @@ public class UiController {
 
 		private final String faviconDanger;
 
+		private final PollTimer pollTimer;
+
 		private final boolean notificationFilterEnabled;
 
 		private final boolean rememberMeEnabled;
@@ -133,6 +136,8 @@ public class UiController {
 		private final List<String> routes;
 
 		private final List<ExternalView> externalViews;
+
+		private final List<ViewSettings> viewSettings;
 
 	}
 
@@ -168,6 +173,29 @@ public class UiController {
 			this.url = url;
 			this.order = order;
 			this.iframe = iframe;
+		}
+
+	}
+
+	@lombok.Data
+	@JsonInclude(Include.NON_EMPTY)
+	@ConstructorBinding
+	public static class ViewSettings {
+
+		/**
+		 * Name of the view to address.
+		 */
+		private final String name;
+
+		/**
+		 * Set view enabled.
+		 */
+		private boolean enabled = true;
+
+		public ViewSettings(String name, boolean enabled) {
+			Assert.hasText(name, "'name' must not be empty");
+			this.name = name;
+			this.enabled = enabled;
 		}
 
 	}

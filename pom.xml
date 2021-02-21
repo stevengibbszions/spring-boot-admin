@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2014-2019 the original author or authors.
+  ~ Copyright 2014-2020 the original author or authors.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@
     <description>Spring Boot Admin</description>
     <url>https://github.com/codecentric/spring-boot-admin/</url>
     <properties>
-        <revision>2.3.0-SNAPSHOT</revision>
+        <revision>2.4.1-SNAPSHOT</revision>
         <java.version>1.8</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -35,39 +35,39 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- used dependencies versions -->
-        <spring-boot.version>2.3.1.RELEASE</spring-boot.version>
-        <spring-cloud.version>2020.0.0-M1</spring-cloud.version>
-        <wiremock.version>2.26.1</wiremock.version>
-        <hazelcast-tests.version>3.12.6</hazelcast-tests.version>
+        <spring-boot.version>2.4.3</spring-boot.version>
+        <spring-cloud.version>2020.0.0-M3</spring-cloud.version>
+        <wiremock.version>2.27.2</wiremock.version>
+        <hazelcast-tests.version>4.0.3</hazelcast-tests.version>
         <findbugs-jsr305.version>3.0.2</findbugs-jsr305.version>
-        <awaitility.version>4.0.2</awaitility.version>
+        <awaitility.version>4.0.3</awaitility.version>
+        <testcontainers.version>1.15.2</testcontainers.version>
 
         <!-- plugin versions -->
-        <build-helper-maven-plugin.version>3.0.0</build-helper-maven-plugin.version>
+        <build-helper-maven-plugin.version>3.2.0</build-helper-maven-plugin.version>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
-        <maven-site-plugin.version>3.8.2</maven-site-plugin.version>
-        <maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
+        <maven-site-plugin.version>3.9.1</maven-site-plugin.version>
+        <maven-dependency-plugin.version>3.1.2</maven-dependency-plugin.version>
         <maven-deploy-plugin.version>3.0.0-M1</maven-deploy-plugin.version>
         <maven-enforcer-plugin.version>3.0.0-M3</maven-enforcer-plugin.version>
-        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
-        <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
+        <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
+        <maven-failsafe-plugin.version>3.0.0-M5</maven-failsafe-plugin.version>
         <maven-install-plugin.version>2.5.2</maven-install-plugin.version>
         <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
-        <maven-javadoc-plugin.version>3.1.1</maven-javadoc-plugin.version>
-        <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
+        <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
+        <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
-        <maven-war-plugin.version>3.2.3</maven-war-plugin.version>
+        <maven-war-plugin.version>3.3.1</maven-war-plugin.version>
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
-        <exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
-        <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
-        <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
-        <asciidoctor-maven-plugin.version>1.6.0</asciidoctor-maven-plugin.version>
-        <git-commit-id-plugin.version>3.0.1</git-commit-id-plugin.version>
-        <flatten-maven-plugin.version>1.2.1</flatten-maven-plugin.version>
-        <maven-checkstyle-plugin.version>3.1.1</maven-checkstyle-plugin.version>
-        <checkstyle.version>8.29</checkstyle.version>
-        <spring-javaformat-checkstyle.version>0.0.20</spring-javaformat-checkstyle.version>
+        <frontend-maven-plugin.version>1.11.2</frontend-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.8.6</jacoco-maven-plugin.version>
+        <asciidoctor-maven-plugin.version>2.1.0</asciidoctor-maven-plugin.version>
+        <git-commit-id-plugin.version>4.0.3</git-commit-id-plugin.version>
+        <flatten-maven-plugin.version>1.2.5</flatten-maven-plugin.version>
+        <maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
+        <checkstyle.version>8.40</checkstyle.version>
+        <spring-javaformat-checkstyle.version>0.0.27</spring-javaformat-checkstyle.version>
         <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
     </properties>
     <modules>
@@ -132,6 +132,7 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
                     <source>${java.version}</source>
+                    <quiet>true</quiet>
                 </configuration>
                 <executions>
                     <execution>
@@ -158,14 +159,6 @@
                     <execution>
                         <id>checkstyle-validation</id>
                         <phase>validate</phase>
-                        <configuration>
-                            <configLocation>src/checkstyle/checkstyle.xml</configLocation>
-                            <headerLocation>src/checkstyle/checkstyle-header.txt</headerLocation>
-                            <encoding>UTF-8</encoding>
-                            <consoleOutput>true</consoleOutput>
-                            <failOnViolation>true</failOnViolation>
-                            <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                        </configuration>
                         <goals>
                             <goal>check</goal>
                         </goals>
@@ -326,6 +319,7 @@
                     <version>${maven-surefire-plugin.version}</version>
                     <configuration>
                         <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                        <rerunFailingTestsCount>2</rerunFailingTestsCount>
                         <includes>
                             <include>**/*Tests.java</include>
                             <include>**/*Test.java</include>
@@ -369,9 +363,9 @@
                     </dependencies>
                 </plugin>
                 <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>exec-maven-plugin</artifactId>
-                    <version>${exec-maven-plugin.version}</version>
+                    <groupId>com.github.eirslett</groupId>
+                    <artifactId>frontend-maven-plugin</artifactId>
+                    <version>${frontend-maven-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>pl.project13.maven</groupId>
@@ -387,11 +381,6 @@
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
                     <version>${jacoco-maven-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.eluder.coveralls</groupId>
-                    <artifactId>coveralls-maven-plugin</artifactId>
-                    <version>${coveralls-maven-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.sonatype.plugins</groupId>
@@ -414,42 +403,7 @@
             </modules>
         </profile>
         <profile>
-            <id>sign-artifacts</id>
-            <activation>
-                <property>
-                    <name>env.GPG_PASSPHRASE</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <configuration>
-                            <passphrase>${env.GPG_PASSPHRASE}</passphrase>
-                            <homedir>${user.dir}/.gnupg</homedir>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>travis</id>
-            <activation>
-                <property>
-                    <name>env.TRAVIS</name>
-                    <value>true</value>
-                </property>
-            </activation>
+            <id>coverage</id>
             <build>
                 <plugins>
                     <plugin>
@@ -468,21 +422,40 @@
                                  been run. -->
                             <execution>
                                 <id>post-unit-test</id>
-                                <phase>test</phase>
                                 <goals>
                                     <goal>report</goal>
                                 </goals>
                             </execution>
                         </executions>
                     </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>central-deploy</id>
+            <build>
+                <plugins>
                     <plugin>
-                        <groupId>org.eluder.coveralls</groupId>
-                        <artifactId>coveralls-maven-plugin</artifactId>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <configuration>
+                                    <!-- This is necessary for gpg to not try to use the pinentry programs -->
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>
+                            </execution>
+                        </executions>
                     </plugin>
 
-                    <!-- We need to deploy using the nexus-staging-maven-plugin specifying a stagingProfileId. This is to
-                         workaround the problem that travis uploads the artifacts using different ip addresses resulting
-                         in multiple staging repositories -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-deploy-plugin</artifactId>
@@ -495,18 +468,17 @@
                         <artifactId>nexus-staging-maven-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>default-deploy</id>
+                                <id>deploy-to-sonatype</id>
                                 <phase>deploy</phase>
                                 <goals>
                                     <goal>deploy</goal>
+                                    <goal>release</goal>
                                 </goals>
                             </execution>
                         </executions>
                         <configuration>
-                            <serverId>${repositoryId}</serverId>
+                            <serverId>oss.sonatype.org</serverId>
                             <nexusUrl>https://oss.sonatype.org</nexusUrl>
-                            <!-- explicit matching using the staging profile id -->
-                            <stagingProfileId>1e79a0f1acc1b8</stagingProfileId>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -569,9 +541,9 @@
     </profiles>
     <distributionManagement>
         <snapshotRepository>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/codecentric/spring-boot-admin</url>
         </snapshotRepository>
         <repository>
             <id>sonatype-nexus-staging</id>

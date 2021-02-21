@@ -137,8 +137,16 @@ public class AdminServerInstanceWebClientConfiguration {
 
 		@Bean
 		@ConditionalOnMissingBean
-		public BasicAuthHttpHeaderProvider basicAuthHttpHeadersProvider() {
-			return new BasicAuthHttpHeaderProvider();
+		public BasicAuthHttpHeaderProvider basicAuthHttpHeadersProvider(AdminServerProperties adminServerProperties) {
+			AdminServerProperties.InstanceAuthProperties instanceAuth = adminServerProperties.getInstanceAuth();
+
+			if (instanceAuth.isEnabled()) {
+				return new BasicAuthHttpHeaderProvider(instanceAuth.getDefaultUserName(),
+						instanceAuth.getDefaultPassword(), instanceAuth.getServiceMap());
+			}
+			else {
+				return new BasicAuthHttpHeaderProvider();
+			}
 		}
 
 	}
@@ -204,6 +212,12 @@ public class AdminServerInstanceWebClientConfiguration {
 		@ConditionalOnMissingBean(name = "mappingsLegacyEndpointConverter")
 		public LegacyEndpointConverter mappingsLegacyEndpointConverter() {
 			return LegacyEndpointConverters.mappings();
+		}
+
+		@Bean
+		@ConditionalOnMissingBean(name = "startupLegacyEndpointConverter")
+		public LegacyEndpointConverter startupLegacyEndpointConverter() {
+			return LegacyEndpointConverters.startup();
 		}
 
 	}

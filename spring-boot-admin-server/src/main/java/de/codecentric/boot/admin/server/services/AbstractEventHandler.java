@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2019 the original author or authors.
+ * Copyright 2014-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
-import reactor.retry.Retry;
+import reactor.util.retry.Retry;
 
 import de.codecentric.boot.admin.server.domain.events.InstanceEvent;
 
@@ -54,15 +54,15 @@ public abstract class AbstractEventHandler<T extends InstanceEvent> {
 		this.scheduler = this.createScheduler();
 		this.subscription = Flux.from(this.publisher).subscribeOn(this.scheduler).log(this.log.getName(), Level.FINEST)
 				.doOnSubscribe((s) -> this.log.debug("Subscribed to {} events", this.eventType)).ofType(this.eventType)
-				.cast(this.eventType).transform(this::handle).retryWhen(Retry.any().retryMax(Long.MAX_VALUE)
-						.doOnRetry((ctx) -> this.log.warn("Unexpected error", ctx.exception())))
+				.cast(this.eventType).transform(this::handle)
+				.retryWhen(Retry.indefinitely().doBeforeRetry((s) -> this.log.warn("Unexpected error", s.failure())))
 				.subscribe();
 	}
 
 	protected abstract Publisher<Void> handle(Flux<T> publisher);
 
 	protected Scheduler createScheduler() {
-		return Schedulers.newElastic(this.getClass().getSimpleName());
+		return Schedulers.newSingle(this.getClass().getSimpleName());
 	}
 
 	public void stop() {
